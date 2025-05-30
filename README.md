@@ -34,7 +34,7 @@ git clone https://github.com/TOM88812/xiaozhi-android-client.git
 ```
 2. 克隆项目:本项目地址
 ```bash
-git clone https://github.com/hlk16/android-xiaozhi.git
+https://github.com/hlk16/android-xiaozhi.git
 ```
 
 2. 使用Android Studio打开项目
@@ -64,9 +64,10 @@ git clone https://github.com/hlk16/android-xiaozhi.git
 tip：
 1.蓝牙连接需要系统中配对过才会显示，可以在手机系统中搜索蓝牙设备，配对后再打开应用
 2.udp esp32cam摄像头图传的页面需要在esp32cam烧入给定的固件，连接esp32的ap热点后使用
-3.连接不上虾哥服务器，不知道什么bug，自己部署虾哥后端源码可以运行 o_o？
+3.可调源代码的设备mac地址连接上虾哥服务器，文字提问可以使用但是语言对话不行，可能是opus参数问题，自己部署虾哥后端源码可以都正常运行。 o_o？
 4.单片机代码开发环境使用的是arduinoIDE
 
 >哈哈，一个菜鸟大学生的项目，还是改别人的。
+>bug多，大佬可以改一改发过来呦。
 
 
