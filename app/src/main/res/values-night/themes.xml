@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.XiaoZhi" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryContainer">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorOnPrimaryContainer">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryContainer">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondaryContainer">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/black</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorSurfaceVariant">@color/black</item>
+        <item name="colorOnSurfaceVariant">@color/white</item>
+        <!-- Customize your theme here. -->
+        <item name="materialButtonStyle">@style/Widget.Material3.Button</item>
+        <item name="floatingActionButtonStyle">@style/Widget.Material3.FloatingActionButton.Primary</item>
+        <item name="textInputStyle">@style/Widget.Material3.TextInputLayout.OutlinedBox</item>
+    </style>
+</resources>

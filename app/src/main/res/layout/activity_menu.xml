@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp"
+    tools:context=".activities.menu">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/hello_blank_fragment"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/tableRobot"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="桌面机器人" />
+
+    <Button
+        android:id="@+id/nbIot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="智能家居" />
+
+    <Button
+        android:id="@+id/drone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="无人机控制" />
+
+    <Button
+        android:id="@+id/manus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="安卓manus" />
+
+    <Button
+        android:id="@+id/morePluge"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="自定义插件下载" />
+
+  </LinearLayout>

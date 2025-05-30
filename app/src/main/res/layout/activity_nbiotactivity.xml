@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="2"
+    android:rowCount="3"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="16dp"
+    android:verticalSpacing="24dp"
+    android:horizontalSpacing="16dp"
+    tools:context=".activities.NBIOTActivity">
+
+    <!-- 灯光控制 -->
+
+
+    <LinearLayout
+        android:layout_columnWeight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/rounded_corner">
+
+        <ImageButton
+            android:id="@+id/lightButton"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/light"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="灯光开关"/>
+
+        <TextView
+            android:id="@+id/lightLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="灯光控制"
+            android:textSize="16sp"
+            android:paddingTop="8dp"/>
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+           />
+    </LinearLayout>
+
+    <!-- 空调控制 -->
+    <LinearLayout
+        android:layout_columnWeight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/rounded_corner">
+
+        <ImageButton
+            android:id="@+id/acButton"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/aircontril"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="空调开关"/>
+
+        <TextView
+            android:id="@+id/acLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="空调控制"
+            android:textSize="16sp"
+            android:paddingTop="8dp"/>
+
+        <Switch
+            android:id="@+id/switch2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- 门锁控制 -->
+    <LinearLayout
+        android:layout_columnWeight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/rounded_corner">
+
+        <ImageButton
+            android:id="@+id/doorButton"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/monitor"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="门锁开关"/>
+
+        <TextView
+            android:id="@+id/doorLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="监控"
+            android:textSize="16sp" />
+
+        <Switch
+            android:id="@+id/switch3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <!-- 窗帘控制 -->
+    <LinearLayout
+        android:layout_columnWeight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/rounded_corner">
+
+        <ImageButton
+            android:id="@+id/curtainButton"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/hotwater"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="窗帘开关"/>
+
+        <TextView
+            android:id="@+id/curtainLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:text="热水器"
+            android:textSize="16sp" />
+
+        <Switch
+            android:id="@+id/switch4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_columnWeight="1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/test"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="我是测试数据"
+            android:textSize="25dp"/>
+
+    </LinearLayout>
+
+
+</GridLayout>

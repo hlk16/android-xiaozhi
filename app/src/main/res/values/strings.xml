@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">小智助手</string>
+    <string name="settings">设置</string>
+    <string name="connect">连接</string>
+    <string name="disconnect">断开</string>
+    <string name="start_recording">开始录音</string>
+    <string name="stop_recording">停止录音</string>
+    <string name="websocket_url">WebSocket地址</string>
+    <string name="token">Token</string>
+    <string name="save">保存</string>
+    <string name="enable_token">启用Token</string>
+    <string name="connection_status">连接状态：%s</string>
+    <string name="status_connected">已连接</string>
+    <string name="status_disconnected">未连接</string>
+    <string name="status_error">错误</string>
+    <string name="message_hint">输入消息...</string>
+    <string name="send">发送</string>
+    <string name="start_call">开始通话</string>
+    <string name="end_call">结束通话</string>
+    <string name="calling">通话中...</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">更多功能</string>
+<!--    改成自己的讯飞的appid和apikey和apiSecret-->
+    <string name="appid">###############</string>
+    <string name="apikey">###############</string>
+    <string name="apiSecret">###############</string>
+
+</resources> 

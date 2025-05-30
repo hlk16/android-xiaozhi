@@ -1,0 +1,248 @@
+//开发板型号AI-Thinker-esp32Cam
+#include "esp_camera.h"
+#include <WiFi.h>
+#include <AsyncUDP.h>
+
+AsyncUDP udp;
+AsyncUDP Rudp;
+const char *ssid = "ESP32_CAM";
+const char *password = "12345678";
+
+char rBuff[18]; //UDP接收缓存
+String inputString;
+byte key = 0;
+
+//.......................................................//
+
+#define max_packet_byte 1024 //定义发送图片的包分割大小,每个图像包最大1024字节
+
+//安信可板卡型号选择
+#define PWDN_GPIO_NUM 32
+#define RESET_GPIO_NUM -1
+#define XCLK_GPIO_NUM 0
+#define SIOD_GPIO_NUM 26
+#define SIOC_GPIO_NUM 27
+#define Y9_GPIO_NUM 35
+#define Y8_GPIO_NUM 34
+#define Y7_GPIO_NUM 39
+#define Y6_GPIO_NUM 36
+#define Y5_GPIO_NUM 21
+#define Y4_GPIO_NUM 19
+#define Y3_GPIO_NUM 18
+#define Y2_GPIO_NUM 5
+#define VSYNC_GPIO_NUM 25
+#define HREF_GPIO_NUM 23
+#define PCLK_GPIO_NUM 22
+int initCamera()
+{
+  //配置摄像头
+  camera_config_t config;
+  config.ledc_channel = LEDC_CHANNEL_0;
+  config.ledc_timer = LEDC_TIMER_0;
+  config.pin_d0 = Y2_GPIO_NUM;
+  config.pin_d1 = Y3_GPIO_NUM;
+  config.pin_d2 = Y4_GPIO_NUM;
+  config.pin_d3 = Y5_GPIO_NUM;
+  config.pin_d4 = Y6_GPIO_NUM;
+  config.pin_d5 = Y7_GPIO_NUM;
+  config.pin_d6 = Y8_GPIO_NUM;
+  config.pin_d7 = Y9_GPIO_NUM;
+  config.pin_xclk = XCLK_GPIO_NUM;
+  config.pin_pclk = PCLK_GPIO_NUM;
+  config.pin_vsync = VSYNC_GPIO_NUM;
+  config.pin_href = HREF_GPIO_NUM;
+  config.pin_sscb_sda = SIOD_GPIO_NUM;
+  config.pin_sscb_scl = SIOC_GPIO_NUM;
+  config.pin_pwdn = PWDN_GPIO_NUM;
+  config.pin_reset = RESET_GPIO_NUM;
+  config.xclk_freq_hz = 20000000; //摄像头的工作时钟，在允许范围内频率越高帧率就越高
+
+  //----------可用的图像格式----------
+  //  PIXFORMAT_RGB565,    // 2BPP/RGB565
+  //  PIXFORMAT_YUV422,    // 2BPP/YUV422
+  //  PIXFORMAT_GRAYSCALE, // 1BPP/GRAYSCALE
+  //  PIXFORMAT_JPEG,      // JPEG/COMPRESSED
+  //  PIXFORMAT_RGB888,    // 3BPP/RGB888
+  //  PIXFORMAT_RAW,       // RAW
+  //  PIXFORMAT_RGB444,    // 3BP2P/RGB444
+  //  PIXFORMAT_RGB555,    // 3BP2P/RGB555
+  config.pixel_format = PIXFORMAT_JPEG; //输出JPEG图像
+
+  //----------可用的图像分辨率----------
+  //  FRAMESIZE_96x96,    // 96x96
+  //  FRAMESIZE_QQVGA,    // 160x120
+  //  FRAMESIZE_QQVGA2,   // 128x160
+  //  FRAMESIZE_QCIF,     // 176x144
+  //  FRAMESIZE_HQVGA,    // 240x176
+  //  FRAMESIZE_240x240,  // 240x240
+  //  FRAMESIZE_QVGA,     // 320x240
+  //  FRAMESIZE_CIF,      // 400x296
+  //  FRAMESIZE_VGA,      // 640x480
+  //  FRAMESIZE_SVGA,     // 800x600
+  //  FRAMESIZE_XGA,      // 1024x768
+  //  FRAMESIZE_SXGA,     // 1280x1024
+  //  FRAMESIZE_UXGA,     // 1600x1200
+  //  FRAMESIZE_QXGA,     // 2048*1536
+
+  config.frame_size = FRAMESIZE_VGA; //图像尺寸（640x480）
+  config.jpeg_quality = 12;          //（10-63）越小照片质量最好
+  config.fb_count = 1;               //要分配的帧缓冲区数。 如果不止一帧，则将获取每帧（双倍速度）i2s以连续模式运行.仅与JPEG一起使用
+
+  // camera init
+  esp_err_t err = esp_camera_init(&config);
+  if (err != ESP_OK)
+  {
+    Serial.printf("Camera init failed with error 0x%x", err);
+    return 1;
+  }
+
+  sensor_t *s = esp_camera_sensor_get();
+  s->set_vflip(s, 1);
+  s->set_hmirror(s, 1);
+
+  Serial.println("Camera Init OK!!!");
+  return 0;
+}
+
+void setup() //程序加电后初始化
+{
+  Serial.begin(115200);
+  Serial.setDebugOutput(true);
+
+  WiFi.mode(WIFI_AP);                  //wifi初始化
+  while (!WiFi.softAP(ssid, password)) //启动AP
+  {
+  }
+  Serial.println("AP启动成功");
+
+  /*
+    创建两个数据端口，端口10001用于向手机方向发送图像数据，端口10011用于接收上位端发送过来的数据
+  */
+  while (!udp.listen(10001)) //等待本机udp监听端口设置成功,端口10001，用于向手机方向发送图像数据
+  {
+  }
+  udp.onPacket([](AsyncUDPPacket packet) { //注册一个端口10001的数据包接收事件，可异步接收数据，虽然此处基本没啥用
+    Serial.print("UDP Packet Type: ");
+    Serial.print(packet.isBroadcast() ? "Broadcast" : packet.isMulticast() ? "Multicast" : "Unicast");
+    Serial.print(", From: ");
+    Serial.print(packet.remoteIP());
+    Serial.print(":");
+    Serial.print(packet.remotePort());
+    Serial.print(", To: ");
+    Serial.print(packet.localIP());
+    Serial.print(":");
+    Serial.print(packet.localPort());
+    Serial.print(", Length: ");
+    Serial.print(packet.length());
+    Serial.print(", Data: ");
+    Serial.write(packet.data(), packet.length());
+    Serial.println();
+    //reply to the client
+    packet.printf("Got %u bytes of data", packet.length());
+  });
+
+
+  while (!Rudp.listen(10011)) //等待本机udp监听端口设置成功,用于接收上位端发送过来的数据
+  {
+  }
+  Rudp.onPacket([](AsyncUDPPacket Rpacket) {//注册一个端口10011的数据包接收事件，可异步接收数据，用于接收上位机发送过来的数据
+    Serial.print("UDP RPacket Type: ");
+    Serial.print(Rpacket.isBroadcast() ? "Broadcast" : Rpacket.isMulticast() ? "Multicast" : "Unicast");
+    Serial.print(", From: ");
+    Serial.print(Rpacket.remoteIP());
+    Serial.print(":");
+    Serial.print(Rpacket.remotePort());
+    Serial.print(", To: ");
+    Serial.print(Rpacket.localIP());
+    Serial.print(":");
+    Serial.print(Rpacket.localPort());
+    Serial.print(", Length: ");
+    Serial.print(Rpacket.length());
+    Serial.print(", Data: ");
+    Serial.write(Rpacket.data(), Rpacket.length());
+    Serial.println();
+    //reply to the client
+    Rpacket.printf("Got %u bytes of data", Rpacket.length());
+
+    //    String testString = String( (char*) Rpacket.data());
+    //    Serial.println(testString);
+    for (int i = 0; i < Rpacket.length(); i++)
+    {
+      rBuff[i] = (char) * (Rpacket.data() + i);
+      //Serial.write(rBuff[i]);
+    }
+    inputString = String(rBuff);
+    if (inputString.indexOf("110") != -1)
+    {
+      // Serial.println("Get 110");
+      if (key == 0)
+      {
+        key = 1;
+        digitalWrite(4, HIGH); // turn the LED on by making the voltage HIGH
+      }
+      else
+      {
+        key = 0;
+        digitalWrite(4, LOW); // turn the LED off by making the voltage LOW
+      }
+    }
+    else
+    {
+      // Serial.println("Not 110");
+      digitalWrite(4, LOW); // turn the LED off by making the voltage LOW
+    }
+
+  });
+
+  initCamera(); //相机初始化
+
+  pinMode(4, OUTPUT);    //LED灯，GPIO4
+  digitalWrite(4, HIGH); // turn the LED on by making the voltage HIGH
+  delay(1000);
+  digitalWrite(4, LOW); // turn the LED off by making the voltage LOW
+}
+
+void loop()
+{
+  if (udp.connect(IPAddress(192, 168, 4, 2), 10000)) //检查网络连接是否存在,这取决于上位机是否连接,这里条件是如果有连接则处理,否则进入下一次loop.
+  {
+    camera_fb_t *fb = NULL;
+    fb = esp_camera_fb_get(); //拍照
+    if (!fb)                  //拍照不成功时重新拍照
+    {
+      Serial.println("Camera capture failed");
+      return;
+    }
+    uint8_t *P_temp = fb->buf;                            //暂存指针初始位置
+    int pic_length = fb->len;                             //获取图片字节数量
+    int pic_pack_quantity = pic_length / max_packet_byte; //将图片分包时可以分几个整包
+    int remine_byte = pic_length % max_packet_byte;       //余值,即最后一个包的大小
+
+    Serial.println();
+    Serial.println("pic_length is:         " + String(pic_length));
+    Serial.println("pic_pack_quantity is:  " + String(pic_pack_quantity));
+    Serial.println("remine_byte is:        " + String(remine_byte));
+
+    //  for (int i = 0; i < pic_length; i++)                //DEBUG发送图片信息,这是按分包循环发送
+    //  {
+    //    Serial.printf("%x", (*(fb->buf)));
+    //    fb->buf++;                                       //图片内存指针移动到相应位置
+    //  }
+
+    udp.print("ok");                            //向上位机发送一个字符串"ok"表示开始发送信息,这也是第一个包,包的内容是字符串,即只有2个字节.虽然是二进制发送,但对方可以方便地转为ASCII字符
+    udp.print(pic_length);                      //向上位机发送这个图片的大小,这个包也是用字符串发送,即每个字符占一个字节
+    for (int j = 0; j < pic_pack_quantity; j++) //发送图片信息,这是按分包循环发送,每一次循环发送一个包,包的大小就是上面指定的1024个字节.
+    {
+      udp.write(fb->buf, max_packet_byte); //将图片分包发送
+      for (int i = 0; i < max_packet_byte; i++)
+      {
+        fb->buf++; //图片内存指针移动到相应位置
+      }
+    }
+    udp.write(fb->buf, remine_byte); //发送最后一个包，剩余的数据
+
+    fb->buf = P_temp;         //将当时保存的指针重新返还最初位置
+    esp_camera_fb_return(fb); //清理像机
+  }
+  delay(50); //50毫秒循环一次,也就是每秒发送20次照片,在局域网内,这不算快,当然没有必要这么快了,你可以调大一些
+}
